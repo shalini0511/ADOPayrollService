@@ -50,5 +50,16 @@ namespace ADOEmployeePayrollTesting
             int actual = employeeRepository.RetrieveQuery(employeeDataManager);
             Assert.AreEqual(actual, expected);
         }
+
+        //Usecase 4: Update basic pay in Sql Server using Stored Procedure
+        [TestMethod]
+        [TestCategory("Using Stored Procedure")]
+        public void GivenStartDate_UsingStoredProcedure_ReturnStringodName()
+        {
+            EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+            string expected = "Harsha Varghese Ashaya Sivakumar ";
+            string actual = employeeRepository.DataBasedOnDateRange();
+            Assert.AreEqual(actual, expected);
+        }
     }
 }

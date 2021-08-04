@@ -163,5 +163,65 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             sqlConnection.Close();
             return result;
         }
+        //Usecase 5: Finds the employees in a given range from start date to current
+        public string DataBasedOnDateRange()
+        {
+            string nameList = "";
+            try
+            {
+                using (sqlConnection)
+                {
+                    //query execution
+                    string query = @"select * from employee_payroll where StartDate BETWEEN Cast('2019-11-12' as Date) and GetDate();";
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open sql connection
+                    sqlConnection.Open();
+
+                    SqlDataReader sqlDataReader = command.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            DisplayEmployeeDetails(sqlDataReader);
+                            nameList += sqlDataReader["EmployeeName"].ToString() + " ";
+                        }
+                    }
+                    //close reader
+                    sqlDataReader.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+
+                sqlConnection.Close();
+            }
+            //returns the count of employee in the list between the given range
+            return nameList;
+
+        }
+        public void DisplayEmployeeDetails(SqlDataReader sqlDataReader)
+        {
+            //Read data SqlDataReader and store 
+            employeeDataManager.EmployeeID = sqlDataReader.GetInt32(0);
+            employeeDataManager.EmployeeName = sqlDataReader["EmployeeName"].ToString();
+            employeeDataManager.BasicPay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+            employeeDataManager.Deduction = Convert.ToDouble(sqlDataReader["Deduction"]);
+            employeeDataManager.IncomeTax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+            employeeDataManager.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+            employeeDataManager.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
+            employeeDataManager.Gender = Convert.ToChar(sqlDataReader["Gender"]);
+            employeeDataManager.EmployeePhoneNumber = Convert.ToInt64(sqlDataReader["EmployeePhoneNumber"]);
+            employeeDataManager.EmployeeDepartment = sqlDataReader["EmployeeDepartment"].ToString();
+            employeeDataManager.Address = sqlDataReader["Address"].ToString();
+            employeeDataManager.StartDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
+            //Display Data
+            Console.WriteLine("\nEmployee ID: {0} \t Employee Name: {1} \nBasic Pay: {2} \t Deduction: {3} \t Income Tax: {4} \t Taxable Pay: {5} \t NetPay: {6} \nGender: {7} \t PhoneNumber: {8} \t Department: {9} \t Address: {10} \t Start Date: {11}", employeeDataManager.EmployeeID, employeeDataManager.EmployeeName, employeeDataManager.BasicPay, employeeDataManager.Deduction, employeeDataManager.IncomeTax, employeeDataManager.TaxablePay, employeeDataManager.NetPay, employeeDataManager.Gender, employeeDataManager.EmployeePhoneNumber, employeeDataManager.EmployeeDepartment, employeeDataManager.Address, employeeDataManager.StartDate);
+
+        }
     }
 }
