@@ -9,10 +9,12 @@ namespace ADOEmployeePayrollTesting
     public class PayrollServiceTesting
     {
         EmployeeRepository employeeRepository;
+        ERRepository eRRepository;
         [TestInitialize]
         public void SetUp()
         {
             employeeRepository = new EmployeeRepository();
+            eRRepository = new ERRepository();
         }
 
         //Usecase 3: Update basic pay in Sql Server
@@ -72,6 +74,7 @@ namespace ADOEmployeePayrollTesting
             string actual = employeeRepository.AggregateFunctionBasedOnGender(query);
             Assert.AreEqual(actual, expected);
         }
+
         [TestMethod]
         [TestCategory("Using SQL Query for Male")]
         public void GivenGenderMale_GroupBygender_ReturnAggregateFunction()
@@ -82,5 +85,71 @@ namespace ADOEmployeePayrollTesting
             string actual = employeeRepository.AggregateFunctionBasedOnGender(query);
             Assert.AreEqual(actual, expected);
         }
+
+        //-----------Usecase 7: Implement UC2-UC7 -----------
+
+        //Usecase2: retrieve all data from table
+        [TestMethod]
+        [TestCategory("Using ER Table Implementation")]
+        public void GivenSelectQuery_ReturnCount()
+        {
+            int expected = 5;
+            int actual = eRRepository.RetrieveAllData();
+            Assert.AreEqual(actual, expected);
+        }
+        //Usecase 3: Update basic pay in Sql Server
+        [TestMethod]
+        [TestCategory("Using ER Table Implementation")]
+        public void GivenUpdateQuery_ERTable_ReturnOne()
+        {
+            int expected = 1;
+            int actual = eRRepository.UpdateSalaryQuery();
+            Assert.AreEqual(actual, expected);
+        }
+        //Usecase 4: Update basic pay in Sql Server using Stored Procedure
+        [TestMethod]
+        [TestCategory("Using ER Table Implementation")]
+        public void GivenUpdateQuery_ERTable_UsingStoredProcedure_ReturnOne()
+        {
+            EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+            int expected = 1;
+            employeeDataManager.EmployeeName = "Nandeeshwar";
+            employeeDataManager.BasicPay = 30000000;
+            int actual = eRRepository.UpdateSalary(employeeDataManager);
+            Assert.AreEqual(actual, expected);
+        }
+        //Usecase 5: Update basic pay in Sql Server using Stored Procedure
+        [TestMethod]
+        [TestCategory("Using ER Table Implementation")]
+        public void GivenStartDate_ERTable_UsingStoredProcedure_ReturnStringodName()
+        {
+            EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+            string expected = "Kriti Deshmuk Nandeeshwar ";
+            string actual = eRRepository.DataBasedOnDateRange();
+            Assert.AreEqual(actual, expected);
+        }
+        [TestMethod]
+        [TestCategory("Using SQL Query for Female")]
+        public void GivenGenderFemale_ERTable_GroupBygender_ReturnAggregateFunction()
+        {
+            EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+            string expected = "7500000 3000000 4500000 3750000 2";
+            string query = "select sum(PayrollCalculate.BasicPay),min(PayrollCalculate.BasicPay),max(PayrollCalculate.BasicPay),Round(AVG(PayrollCalculate.BasicPay),0),COUNT(*)  from Employee inner join PayrollCalculate on Employee.EmployeeId = PayrollCalculate.EmployeeIdentity where Employee.Gender = 'F' group by Employee.Gender";
+            string actual = eRRepository.AggregateFunctionBasedOnGender(query);
+            Assert.AreEqual(actual, expected);
+        }
+
+        [TestMethod]
+        [TestCategory("Using SQL Query for Male")]
+        public void GivenGenderMale_ERTable_GroupBygender_ReturnAggregateFunction()
+        {
+            EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+            string expected = "39000000 9000000 30000000 19500000 2";
+            string query = "select sum(PayrollCalculate.BasicPay),min(PayrollCalculate.BasicPay),max(PayrollCalculate.BasicPay),Round(AVG(PayrollCalculate.BasicPay),0),COUNT(*)  from Employee inner join PayrollCalculate on Employee.EmployeeId = PayrollCalculate.EmployeeIdentity where Employee.Gender = 'M' group by Employee.Gender";
+            string actual = eRRepository.AggregateFunctionBasedOnGender(query);
+            Assert.AreEqual(actual, expected);
+        }
+
+
     }
 }
