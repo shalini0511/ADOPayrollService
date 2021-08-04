@@ -204,6 +204,48 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             return nameList;
 
         }
+        
+        //Usecase 6: Finds the employees in a given range from start date to current
+        public string AggregateFunctionBasedOnGender(string query)
+        {
+            string nameList = "";
+            try
+            {
+                using (sqlConnection)
+                {
+                    ////query execution
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open sql connection
+                    sqlConnection.Open();
+
+                    SqlDataReader sqlDataReader = command.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            Console.WriteLine("TotalSalary: {0} \t MinimumSalary: {1} \t MaximumSalary: {2}AverageSalary: {3} \t Count: {4}", sqlDataReader[0], sqlDataReader[1], sqlDataReader[2], sqlDataReader[3], sqlDataReader[4]);
+                            nameList += sqlDataReader[0] + " " + sqlDataReader[1] + " " + sqlDataReader[2] + " " + sqlDataReader[3] + " " + sqlDataReader[4];
+                        }
+                    }
+                    //close reader
+                    sqlDataReader.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+
+                sqlConnection.Close();
+            }
+            //returns the count of employee in the list between the given range
+            return nameList;
+
+        }
+
         public void DisplayEmployeeDetails(SqlDataReader sqlDataReader)
         {
             //Read data SqlDataReader and store 
