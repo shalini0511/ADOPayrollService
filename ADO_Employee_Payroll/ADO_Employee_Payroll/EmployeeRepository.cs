@@ -110,5 +110,58 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             }
             return result;
         }
+        public int RetrieveQuery(EmployeeDataManager employeeDataManager)
+        {
+
+            int result = 0;
+            try
+            {
+                using (sqlConnection)
+                {
+                    //Give stored Procedure
+                    SqlCommand sqlCommand = new SqlCommand("dbo.spRetrieveDataUsingName", this.sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@name", employeeDataManager.EmployeeName);
+                    //Open Connection
+                    sqlConnection.Open();
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+
+                    //Check if swlDataReader has Rows
+                    if (sqlDataReader.HasRows)
+                    {
+                        //Read each row
+                        while (sqlDataReader.Read())
+                        {
+                            result++;
+                            //Read data SqlDataReader and store 
+                            employeeDataManager.EmployeeID = sqlDataReader.GetInt32(0);
+                            employeeDataManager.EmployeeName = sqlDataReader["EmployeeName"].ToString();
+                            employeeDataManager.BasicPay = Convert.ToDouble(sqlDataReader["BasicPay"]);
+                            employeeDataManager.Deduction = Convert.ToDouble(sqlDataReader["Deduction"]);
+                            employeeDataManager.IncomeTax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
+                            employeeDataManager.TaxablePay = Convert.ToDouble(sqlDataReader["TaxablePay"]);
+                            employeeDataManager.NetPay = Convert.ToDouble(sqlDataReader["NetPay"]);
+                            employeeDataManager.Gender = Convert.ToChar(sqlDataReader["Gender"]);
+                            employeeDataManager.EmployeePhoneNumber = Convert.ToInt64(sqlDataReader["EmployeePhoneNumber"]);
+                            employeeDataManager.EmployeeDepartment = sqlDataReader["EmployeeDepartment"].ToString();
+                            employeeDataManager.Address = sqlDataReader["Address"].ToString();
+                            employeeDataManager.StartDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
+
+                            //Display Data
+                            Console.WriteLine("\nEmployee ID: {0} \t Employee Name: {1} \nBasic Pay: {2} \t Deduction: {3} \t Income Tax: {4} \t Taxable Pay: {5} \t NetPay: {6} \nGender: {7} \t PhoneNumber: {8} \t Department: {9} \t Address: {10}", employeeDataManager.EmployeeID, employeeDataManager.EmployeeName, employeeDataManager.BasicPay, employeeDataManager.Deduction, employeeDataManager.IncomeTax, employeeDataManager.TaxablePay, employeeDataManager.NetPay, employeeDataManager.Gender, employeeDataManager.EmployeePhoneNumber, employeeDataManager.EmployeeDepartment, employeeDataManager.Address);
+                        }
+                        //Close sqlDataReader Connection
+                        sqlDataReader.Close();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            sqlConnection.Close();
+            return result;
+        }
     }
 }
