@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace ADO_Employee_Payroll.ADO_Employee_Payroll
 {
@@ -53,7 +54,7 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             sqlConnection.Close();
         }
         //UseCase 3: Update Salary to 3000000
-        public void UpdateSalaryQuery()
+        public int UpdateSalaryQuery()
         {
             //Open Connection
             sqlConnection.Open();
@@ -72,6 +73,42 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             //Close Connection
             sqlConnection.Close();
             GetSqlData();
+            return result;
+            
+        }
+        public int UpdateSalary(EmployeeDataManager employeeDataManager)
+        {
+            int result = 0;
+            try
+            {
+                using (sqlConnection)
+                {
+                    //Give stored Procedure
+                    SqlCommand sqlCommand = new SqlCommand("dbo.spUpdateSalary", this.sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@salary", employeeDataManager.BasicPay);
+                    sqlCommand.Parameters.AddWithValue("@EmpName", employeeDataManager.EmployeeName);
+                    sqlCommand.Parameters.AddWithValue("@EmpId", employeeDataManager.EmployeeID);
+                    //Open Connection
+                    sqlConnection.Open();
+                    //Return Number of Rows affected
+                    result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Updated");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not Updated");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return result;
         }
     }
 }
