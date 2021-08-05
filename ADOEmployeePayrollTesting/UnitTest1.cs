@@ -149,6 +149,16 @@ namespace ADOEmployeePayrollTesting
             string actual = eRRepository.AggregateFunctionBasedOnGender(query);
             Assert.AreEqual(actual, expected);
         }
+        //Usecase 10: Insert in ER using Transaction
+        [TestMethod]
+        [TestCategory("Using Transaction Query")]
+        public void GivenInsertQuery_usingTransaction_returnOne()
+        {
+            int expected = 1;
+            TransactionClass transactionClass = new TransactionClass();
+            int actual = transactionClass.InsertIntoTables();
+            Assert.AreEqual(actual, expected);
+        }
 
 
     }
