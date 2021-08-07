@@ -203,7 +203,16 @@ namespace ADOEmployeePayrollTesting
             Assert.AreEqual(actual, expected);
         }
         //MultiThreading: Usecase 2
-        //Usecase 11: Delete using Cascade Delete alteration
+        [TestMethod]
+        [TestCategory(" Using Multi-Threating ")]
+        public void GivenretrieveQuery_usingMultiThreading_returnOne()
+        {
+            int expected = 1;
+            TransactionClass transactionClass = new TransactionClass();
+            int actual = transactionClass.ImplementUsingThread();
+            Assert.AreEqual(actual, expected);
+        }
+
 
 
     }

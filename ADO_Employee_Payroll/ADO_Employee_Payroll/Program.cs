@@ -36,8 +36,12 @@ namespace ADO_Employee_Payroll
                     eRRepository.UpdateSalaryQuery();
                     break;
                 case 7:
+                    //TransactionClass transactionClass = new TransactionClass();
+                    //transactionClass.InsertIntoTables();
+                    //break;
+                case 8:
                     TransactionClass transactionClass = new TransactionClass();
-                    transactionClass.InsertIntoTables();
+                    int actual = transactionClass.ImplementUsingThread();
                     break;
             }
 
