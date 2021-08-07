@@ -191,6 +191,20 @@ namespace ADOEmployeePayrollTesting
             transactionClass.RetrieveAllData();
             Assert.AreEqual(actual, expected);
         }
+        //MultiThreading: Usecase 1
+        //Usecase 10: Insert in ER using Transaction
+        [TestMethod]
+        [TestCategory(" Using Multi-Threating ")]
+        public void GivenInsertQuery_usingMultiThreading_returnOne()
+        {
+            int expected = 1;
+            TransactionClass transactionClass = new TransactionClass();
+            int actual = transactionClass.ImplementwithoutUsingThread();
+            Assert.AreEqual(actual, expected);
+        }
+        //MultiThreading: Usecase 2
+        //Usecase 11: Delete using Cascade Delete alteration
+
 
     }
 }

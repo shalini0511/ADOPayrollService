@@ -9,8 +9,9 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
     {
         public static string connectionString = @"Server=.;Database=payroll_services;Trusted_Connection=True;";
         SqlConnection SqlConnection = new SqlConnection(connectionString);
-        private object employeeDataManager;
-
+        //Create Object for EmployeeData Repository
+        EmployeeDataManager employeeDataManager = new EmployeeDataManager();
+        List<EmployeeDataManager> employeeList = new List<EmployeeDataManager>();
         //Transaction Query
         public int InsertIntoTables()
         {
@@ -27,13 +28,19 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
                 {
                     //Insert data into Table
                     sqlCommand.CommandText = "Insert into Employee values ('2','Radha Mani','9600035350', 'Chennai', '2017-12-17', 'F')";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "Insert into PayrollCalculate(EmployeeIdentity,BasicPay) values('5','650000')";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "update PayrollCalculate set Deductions = (BasicPay *20)/100 where EmployeeIdentity = '5'";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "update PayrollCalculate set TaxablePay = (BasicPay - Deductions) where EmployeeIdentity = '5'";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "update PayrollCalculate set IncomeTax = (TaxablePay * 10) / 100 where EmployeeIdentity = '5'";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "update PayrollCalculate set NetPay = (BasicPay - IncomeTax) where EmployeeIdentity = '5'";
+                    sqlCommand.ExecuteNonQuery();
                     sqlCommand.CommandText = "Insert into EmployeeDepartment values('3','5')";
-
+                    sqlCommand.ExecuteNonQuery();
                     //Commit 
                     sqlTransaction.Commit();
                     Console.WriteLine("Updated!");
@@ -133,6 +140,22 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
             SqlConnection.Close();
             return result;
         }
+        //MultiThreading: Usecase 1
+        //Usecase 10: Retrieve in ER using Transaction
+        public int ImplementwithoutUsingThread()
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            RetrieveAllData();
+            stopWatch.Stop();
+            Console.WriteLine("Duration without thread: {0}", stopWatch.ElapsedMilliseconds);
+            if (Convert.ToInt32(stopWatch.ElapsedMilliseconds) != 0)
+            {
+                return 1;
+            }
+            return 0;
+        }
+
         public void RetrieveAllData()
         {
             //Open Connection
@@ -143,12 +166,12 @@ namespace ADO_Employee_Payroll.ADO_Employee_Payroll
                 string query = "SELECT CompanyID,IsActive,CompanyName,EmployeeID,EmployeeName,EmployeeAddress,EmployeePhoneNumber,StartDate,Gender,BasicPay,Deductions,TaxablePay,IncomeTax,NetPay,DepartName FROM Company INNER JOIN Employee ON Company.CompanyID = Employee.CompanyIdentity and Employee.IsActive=1 INNER JOIN PayrollCalculate on PayrollCalculate.EmployeeIdentity = Employee.EmployeeID INNER JOIN EmployeeDepartment on Employee.EmployeeID = EmployeeDepartment.EmployeeIdentity INNER JOIN Department on Department.DepartmentId = EmployeeDepartment.DepartmentIdentity";
                 SqlCommand sqlCommand = new SqlCommand(query, SqlConnection);
                 DisplayEmployeeDetails(sqlCommand);
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+
             //Close Connection
             SqlConnection.Close();
             return;
